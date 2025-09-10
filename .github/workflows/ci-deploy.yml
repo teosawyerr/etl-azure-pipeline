@@ -29,8 +29,22 @@ jobs:
         with:
           creds: ${{ secrets.ETL_AZURE_CREDENTIALS }}
 
-      - name: Deploy ETL as Azure Function
+      - name: Deploy ETL to Staging slot
         uses: azure/functions-action@v1
         with:
           app-name: etl-azure-func
+          slot-name: staging
           package: ./etl
+
+      # Optional: run integration tests or health checks against staging
+      - name: Validate staging deployment
+        run: |
+          curl -f https://etl-azure-func-staging.azurewebsites.net/api/health || exit 1
+
+      - name: Swap Staging -> Production
+        run: |
+          az functionapp deployment slot swap \
+            --name etl-azure-func \
+            --resource-group GitHub-Rg \
+            --slot staging \
+            --target-slot production
