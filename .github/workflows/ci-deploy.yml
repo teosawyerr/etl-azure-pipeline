@@ -27,7 +27,7 @@ jobs:
       - name: Log in to Azure
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS1 }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy ETL as Azure Function
         uses: azure/functions-action@v1
